@@ -1,0 +1,29 @@
+{
+  "name": "hack-b0t",
+  "version": "1.0.0",
+  "description": "hack-b0t is a bot that hacks",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shensd/hack-b0t.git"
+  },
+  "keywords": [
+    "slack",
+    "bot",
+    "hack"
+  ],
+  "author": "shensd",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Shensd/hack-b0t/issues"
+  },
+  "homepage": "https://github.com/Shensd/hack-b0t#readme",
+  "dependencies": {
+    "@slack/client": "^4.8.0",
+    "nodemon": "^1.18.6",
+    "typescript": "^3.1.6"
+  }
+}
