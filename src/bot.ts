@@ -19,7 +19,6 @@ let bot : any = new SlackBot({
 });
 
 let slack : Slack = new Slack(apiToken);
-slack.setWebhook(uri);
 
 /**
  * message callback, tests is a message is a message and if it came from a user

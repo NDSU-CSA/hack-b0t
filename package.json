@@ -24,6 +24,7 @@
   "dependencies": {
     "@slack/client": "^4.8.0",
     "@types/slack-node": "^0.1.2",
+    "event-stream": "^3.3.4",
     "nodemon": "^1.18.6",
     "slack-node": "^0.1.8",
     "slackbots": "^1.2.0",
