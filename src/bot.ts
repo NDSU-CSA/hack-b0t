@@ -1,40 +1,85 @@
-import { WebClient, WebAPICallResult } from "@slack/client";
-import fs from "fs";
+"use strict";
+
+import SlackBot from "slackbots";
+import Slack from "slack-node";
+
+import { commands } from "./commands";
+import { ICommandParams } from "./misc/globals";
 
 const auth = require("../res/auth/auth.json");
 
-const token : string = auth["token"];
+const botToken : string = auth["bot-token"];
+const apiToken : string = auth["api-token"];
 
-const web : WebClient = new WebClient(token);
+const uri : string = "https://hooks.slack.com/services/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";
 
-const conversationID : string = "CDZ8BJ7C2";
+let bot : any = new SlackBot({
+    token: botToken,
+    name: 'hack-b0t'
+});
 
-console.log("USING TOKEN   ", token);
-console.log("POSTING CONVO ", conversationID);
+let slack : Slack = new Slack(apiToken);
+slack.setWebhook(uri);
 
-const main = function() {
+/**
+ * message callback, tests is a message is a message and if it came from a user
+ * and not a bot
+ */
+bot.on("message", (data:any) => {
+    console.log(data);
 
+    // ignore non messages and bot messages
+    if(data.type != "message") return;
+    if(data.subtype == "bot_message") return;
+
+    if(data.text[0] == '$') {
+        parseCommand(data, data.text);
+    }
+});
+
+/**
+ * gets a users name from a callback data object
+ * 
+ * @param data data from callback
+ * @returns promise for name
+ */
+function getName(data:any) {
+    return new Promise( (resolve : (name : string) => void) => {
+        slack.api("users.info", {
+            token: apiToken,
+            user: data.user
+        }, (err:any, response:any) => {
+            if(err) console.log(err);
+            console.log(response);
+    
+            let name : string = "USER";
+    
+            name = response.user.profile.display_name;
+    
+            if(name == "") {
+                name = response.user.profile.real_name;
+            }
+    
+            resolve(name);
+        });
+    });
 }
 
-web.chat.postMessage({
-    channel: conversationID,
-    text: "1 AM AL1V3" 
-    })
-    .then((res) => {
-        console.log("Message sent : ", res);
-    })
-    .catch(console.error);
+/**
+ * parses a data structure that has a command call
+ * @param data data from message callback
+ * @param text test in data 
+ */
+function parseCommand(data:any, text:string) {
+    let messageTokens : string[] = text.slice(1, text.length).split(" ");
+    console.log(messageTokens);
+    if(commands[messageTokens[0].toLowerCase()]) {
 
-/*
-const filename = "res/img/test.png";
+        const params: ICommandParams = {
+            bot: bot,
+            data: data
+        };
 
-web.files.upload({
-    filename,
-    file: fs.createReadStream(filename),
-    channels: conversationID
-    })
-    .then((res : WebAPICallResult) => {
-        console.log("Uploaded: ", res);
-    })
-    .catch(console.error);
-*/
+        commands[messageTokens[0].toLowerCase()].process(params);
+    }
+}

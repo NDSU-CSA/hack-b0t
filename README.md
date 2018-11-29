@@ -9,7 +9,13 @@ feel free to ignore him.
 
 ### What Does it Do?
 
-Nothing, *yet*
+So far it only has basic chat commands, these commands are:
+
+```
+* help ------ Displays a help page
+* ping ------ Pong!
+* purpose --- Find out Hack-b0t's purpose
+```
 
 ### How Do I Add it to my Slack Server?
 

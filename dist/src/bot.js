@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var slackbots_1 = __importDefault(require("slackbots"));
 var slack_node_1 = __importDefault(require("slack-node"));
-var commands_1 = require("./commands");
 var auth = require("../res/auth/auth.json");
 var botToken = auth["bot-token"];
 var apiToken = auth["api-token"];
@@ -61,13 +60,8 @@ function getName(data) {
  * @param text test in data
  */
 function parseCommand(data, text) {
-    var messageTokens = text.slice(1, text.length).split(" ");
-    console.log(messageTokens);
-    if (commands_1.commands[messageTokens[0].toLowerCase()]) {
-        var params = {
-            bot: bot,
-            data: data
-        };
-        commands_1.commands[messageTokens[0].toLowerCase()].process(params);
-    }
+    getName(data)
+        .then(function (name) {
+        bot.postMessage(data.channel, name + " : " + data.text.toUpperCase().slice(1, data.text.length));
+    });
 }
