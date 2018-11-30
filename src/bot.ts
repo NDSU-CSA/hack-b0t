@@ -10,13 +10,15 @@ const auth = require("../res/auth/auth.json");
 
 const botToken : string = auth["bot-token"];
 const apiToken : string = auth["api-token"];
+const webhookUri : string = auth["webhook"];
 
 let bot : any = new SlackBot({
     token: botToken,
     name: 'hack-b0t'
 });
 
-let slack : Slack = new Slack(apiToken);
+let slack : Slack = new Slack(botToken);
+slack.setWebhook(webhookUri);
 
 /**
  * Even though it says message, this handler catches literally everything, 

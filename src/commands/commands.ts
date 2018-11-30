@@ -3,8 +3,10 @@
 import SlackBot from "slackbots";
 import Slack from "slack-node";
 import fs from "fs";
+import Jimp from "jimp";
 
 import { ICommandParams, CALLSIGN } from "../misc/globals";
+import { uploadImage } from "../api/uploadFile";
 
 export interface ICommand {
     name: string;
@@ -68,19 +70,50 @@ export const commands : {[key: string] : ICommand} = {
     "anime": {
         name: "anime",
         description: "Image testing command",
-        category: "fun",
+        category: "fun", 
         usage: "anime",
         admin: false,
         process: (params: ICommandParams) : void  => {
-            const filename : string = "./res/img/test.png";
-            params.slack.api("chat.postMessage", {
-                file: fs.readFileSync(filename),
-                text: "message content",
-                channel: params.data.channel
-            }, (err: any, response:any) : void => {
-                if(err) console.log(err);
-                console.log(response);
+            const filename : string = "./res/img/test_small.png";
+
+            uploadImage(params.slack, filename, params.data.channel);
+        }
+    },
+    "magik": {
+        name: "magik",
+        description: "Image edit test command",
+        category: "fun",
+        usage: "magik",
+        admin: false,
+        process: (params: ICommandParams) : void  => {
+            const filename : string = "./res/img/test_small.png";
+            
+            let outFile : string = `./res/dynamic_img/${(Math.random() * 5000) + 1000}.png`;
+
+            Jimp.loadFont(Jimp.FONT_SANS_128_WHITE).then((font : any) => {
+                console.log("FONT LOADED...");
+                Jimp.read(filename)
+                .then(image => {
+                    console.log("FILE READ...");
+                    image
+                        .invert()
+                        .print(
+                            font, 
+                            0, 
+                            0, 
+                            {
+                                text: "HACK-B0T",
+                                alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
+                                alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE
+                            },
+                            image.getWidth(),
+                            image.getHeight())
+                        .write(outFile);
+                    console.log("EDITING DONE...");
+                    
+                    uploadImage(params.slack, outFile, params.data.channel);
+                });
             });
         }
-    }
+    },
 }
