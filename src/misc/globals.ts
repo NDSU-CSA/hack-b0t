@@ -7,12 +7,12 @@ export interface IEventParams {
     bot : any,
     data : any,
     slack: Slack,
-    apiToken : string
+    user : Slack
 }
 
 export interface ICommandParams {
     bot : any, 
     data : any,
     slack : Slack,
-    apiToken : string
+    user : Slack
 }

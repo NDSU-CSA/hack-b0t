@@ -4,6 +4,7 @@ import SlackBot from "slackbots";
 import Slack from "slack-node";
 import fs from "fs";
 import Jimp from "jimp";
+import http from 'http';
 
 import { ICommandParams, CALLSIGN } from "../misc/globals";
 import { uploadImage } from "../api/uploadFile";
@@ -79,41 +80,38 @@ export const commands : {[key: string] : ICommand} = {
             uploadImage(params.slack, filename, params.data.channel);
         }
     },
-    "magik": {
-        name: "magik",
-        description: "Image edit test command",
+    "invert": {
+        name: "invert",
+        description: "Inverts the colors of the most recent sent image",
         category: "fun",
-        usage: "magik",
+        usage: "invert",
         admin: false,
         process: (params: ICommandParams) : void  => {
-            const filename : string = "./res/img/test_small.png";
-            
-            let outFile : string = `./res/dynamic_img/${(Math.random() * 5000) + 1000}.png`;
 
-            Jimp.loadFont(Jimp.FONT_SANS_128_WHITE).then((font : any) => {
-                console.log("FONT LOADED...");
-                Jimp.read(filename)
-                .then(image => {
-                    console.log("FILE READ...");
-                    image
-                        .invert()
-                        .print(
-                            font, 
-                            0, 
-                            0, 
-                            {
-                                text: "HACK-B0T",
-                                alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
-                                alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE
-                            },
-                            image.getWidth(),
-                            image.getHeight())
-                        .write(outFile);
-                    console.log("EDITING DONE...");
-                    
-                    uploadImage(params.slack, outFile, params.data.channel);
+            params.user.api("files.list", {
+                channel: params.data.channel,
+                types: "images",
+                count: 1
+            }, (err : any, response : any) : void => {
+
+                if(err) console.log(err);
+                
+                let temp : string = `./res/dynamic_img/${(Math.random() * 5000) + 1000}.png`;
+                Jimp.read(response.files[0].url_private)
+                .then((image) => {
+                    image.invert().write(temp);
+                    params.slack.api("files.upload", {
+                        filename: `emptybowl`,
+                        file: fs.createReadStream(temp),
+                        channels: params.data.channel
+                    }, (err:any, response:any) : void => {
+                        if(err) console.log(err);
+
+                        fs.unlinkSync(temp);
+                    });
                 });
             });
+
         }
     },
 }

@@ -20,6 +20,8 @@ let bot : any = new SlackBot({
 let slack : Slack = new Slack(botToken);
 slack.setWebhook(webhookUri);
 
+let user : Slack = new Slack(apiToken); 
+
 /**
  * Even though it says message, this handler catches literally everything, 
  * because of this we need to filter items before sending them to the right
@@ -34,10 +36,13 @@ bot.on("message", (data:any) => {
         data: data, 
         bot: bot, 
         slack: slack,
-        apiToken: apiToken
+        user: user
     };
 
     if(data.type == "message") {
         onMessage(params);
+    }
+    if(data.type == "hello") {
+        console.log("hack-b0t is ready.");
     }
 });
