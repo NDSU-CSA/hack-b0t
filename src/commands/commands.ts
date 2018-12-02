@@ -1,13 +1,12 @@
 "use strict";
 
-import SlackBot from "slackbots";
-import Slack from "slack-node";
 import fs from "fs";
 import Jimp from "jimp";
-import http from 'http';
 
 import { ICommandParams, CALLSIGN } from "../misc/globals";
-import { uploadImage } from "../api/uploadFile";
+
+import { Duplex } from "stream";
+
 
 export interface ICommand {
     name: string;
@@ -45,7 +44,7 @@ export const commands : {[key: string] : ICommand} = {
 
             responseText += `Usage: ${CALLSIGN}command [params]\n`
             responseText += "```";
-            params.bot.postMessage(params.data.channel, responseText);
+            params.bot.postMessage(params.message.channel, responseText);
         }
     },
     "ping": {
@@ -55,7 +54,7 @@ export const commands : {[key: string] : ICommand} = {
         usage: "ping",
         admin: false,
         process: (params: ICommandParams) : void  => {
-            params.bot.postMessage(params.data.channel, "Pong!");
+            params.bot.postMessage(params.message.channel, "Pong!");
         }
     },
     "purpose": {
@@ -65,7 +64,7 @@ export const commands : {[key: string] : ICommand} = {
         usage: "purpose",
         admin: false,
         process: (params: ICommandParams) : void  => {
-            params.bot.postMessage(params.data.channel, "1 EX1ST T0 HACK");
+            params.bot.postMessage(params.message.channel, "1 EX1ST T0 HACK");
         }
     },
     "anime": {
@@ -75,9 +74,15 @@ export const commands : {[key: string] : ICommand} = {
         usage: "anime",
         admin: false,
         process: (params: ICommandParams) : void  => {
+            if(!params.message.channel) return;
+
             const filename : string = "./res/img/test_small.png";
 
-            uploadImage(params.slack, filename, params.data.channel);
+            params.slack.files.upload({
+                filename: filename,
+                file: fs.createReadStream(filename),
+                channels: params.message.channel
+            });
         }
     },
     "invert": {
@@ -88,30 +93,36 @@ export const commands : {[key: string] : ICommand} = {
         admin: false,
         process: (params: ICommandParams) : void  => {
 
-            params.user.api("files.list", {
-                channel: params.data.channel,
+            params.user.files.list({
+                channel: params.message.channel,
                 types: "images",
                 count: 1
-            }, (err : any, response : any) : void => {
+            })
+            .then((response : any) => {
+                let downloadParams : any = {
+                    url: response.files[0].url_private,
+                    headers: {
+                        "Authorization" : `Bearer ${params.userToken}`
+                    }
+                };
+                return Jimp.read(downloadParams);
+            })
+            .then((image : Jimp) => image.invert().getBufferAsync(Jimp.MIME_JPEG))
+            .then((buffer : Buffer) => {
+                let stream : Duplex = new Duplex();
+                stream.push(buffer);
+                stream.push(null);
 
-                if(err) console.log(err);
-                
-                let temp : string = `./res/dynamic_img/${(Math.random() * 5000) + 1000}.png`;
-                Jimp.read(response.files[0].url_private)
-                .then((image) => {
-                    image.invert().write(temp);
-                    params.slack.api("files.upload", {
-                        filename: `emptybowl`,
-                        file: fs.createReadStream(temp),
-                        channels: params.data.channel
-                    }, (err:any, response:any) : void => {
-                        if(err) console.log(err);
-
-                        fs.unlinkSync(temp);
-                    });
+                return params.slack.files.upload({
+                    filename: `${Math.floor(Math.random() * 5000) + 1000}`,
+                    file: stream,
+                    channels: params.message.channel
                 });
+            })
+            .catch((err : Error) => {
+                console.log(err);
+                params.bot.postMessage(params.message.channel, "Unable to invert image");
             });
-
         }
     },
 }

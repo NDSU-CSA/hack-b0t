@@ -1,17 +1,27 @@
 import SlackBot from "slackbots";
-import Slack from "slack-node";
+import { WebClient } from "@slack/client";
 
 import { commands } from "../commands/commands";
-import { ICommandParams, IEventParams, CALLSIGN } from "../misc/globals";
+import { CALLSIGN } from "../misc/globals";
+import { IMessage } from "../api/messages";
+
+export interface IMessageEventParams {
+    bot : any,
+    message : IMessage,
+    slack: WebClient,
+    user : WebClient,
+    userToken: string
+}
 
 /**
  * respond to a message event
  * @param params event params
  */
-export function onMessage(params : IEventParams) : void {
-    if(params.data.subtype == "bot_message") return;
-    
-    let text : string = params.data.text;
+export function onMessage(params : IMessageEventParams) : void {
+    if(params.message.subtype == "bot_message") return;
+    if(!params.message.text) return;
+
+    let text : string = params.message.text;
 
     if(text[0] != CALLSIGN) return;
 
