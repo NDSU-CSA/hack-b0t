@@ -1,5 +1,4 @@
 {
     "bot-token":"xoxb-xxxxx-xxxxx-xxxxx",
-    "api-token":"xoxp-xxxxx-xxxxx-xxxxx-xxxxx",
-    "webhook":"https://hooks.slack.com/services/xxx/xxx/xxx"
+    "user-token":"xoxp-xxxxx-xxxxx-xxxxx-xxxxx"
 }
