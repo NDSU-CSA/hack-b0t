@@ -24,7 +24,7 @@ export const commands : {[key: string] : ICommand} = {
         category: "utility",
         usage: "help",
         admin: false,
-        process: (params: ICommandParams) : void => {
+        process: async (params: ICommandParams) : Promise<void> => {
             let responseText = "```\n";
             // find longest command name
             let longestCmd : number = 0;
@@ -53,7 +53,7 @@ export const commands : {[key: string] : ICommand} = {
         category: "fun",
         usage: "ping",
         admin: false,
-        process: (params: ICommandParams) : void  => {
+        process: async (params: ICommandParams) : Promise<void> => {
             params.bot.postMessage(params.message.channel, "Pong!");
         }
     },
@@ -63,7 +63,7 @@ export const commands : {[key: string] : ICommand} = {
         category: "fun",
         usage: "purpose",
         admin: false,
-        process: (params: ICommandParams) : void  => {
+        process: async (params: ICommandParams) : Promise<void> => {
             params.bot.postMessage(params.message.channel, "1 EX1ST T0 HACK");
         }
     },
@@ -73,7 +73,7 @@ export const commands : {[key: string] : ICommand} = {
         category: "fun", 
         usage: "anime",
         admin: false,
-        process: (params: ICommandParams) : void  => {
+        process: async (params: ICommandParams) : Promise<void> => {
             if(!params.message.channel) return;
 
             const filename : string = "./res/img/test_small.png";
@@ -91,7 +91,9 @@ export const commands : {[key: string] : ICommand} = {
         category: "image",
         usage: "invert",
         admin: false,
-        process: (params: ICommandParams) : void  => {
+        process: async (params: ICommandParams) : Promise<void> => {
+
+            let start = Date.now();
 
             params.user.files.list({
                 channel: params.message.channel,
@@ -116,7 +118,8 @@ export const commands : {[key: string] : ICommand} = {
                 return params.slack.files.upload({
                     filename: `${Math.floor(Math.random() * 5000) + 1000}`,
                     file: stream,
-                    channels: params.message.channel
+                    channels: params.message.channel,
+                    initial_comment : `${Date.now() - start} ms`
                 });
             })
             .catch((err : Error) => {
@@ -131,7 +134,7 @@ export const commands : {[key: string] : ICommand} = {
         category: "image",
         usage: "blur [amt, default 5]",
         admin: false,
-        process: (params: ICommandParams) : void  => {
+        process: async (params: ICommandParams) : Promise<void> => {
             if(!params.message.text) return;
 
             let blurAmt : number = 5;
@@ -144,6 +147,8 @@ export const commands : {[key: string] : ICommand} = {
                     blurAmt = parseInt(amt);
                 }
             }
+
+            let start = Date.now();
 
             params.user.files.list({
                 channel: params.message.channel,
@@ -168,7 +173,8 @@ export const commands : {[key: string] : ICommand} = {
                 return params.slack.files.upload({
                     filename: `${Math.floor(Math.random() * 5000) + 1000}`,
                     file: stream,
-                    channels: params.message.channel
+                    channels: params.message.channel,
+                    initial_comment : `${Date.now() - start} ms`
                 });
             })
             .catch((err : Error) => {

@@ -17,7 +17,7 @@ export interface IMessageEventParams {
  * respond to a message event
  * @param params event params
  */
-export function onMessage(params : IMessageEventParams) : void {
+export async function onMessage(params : IMessageEventParams) : Promise<void> {
     if(params.message.subtype == "bot_message") return;
     if(!params.message.text) return;
 
@@ -29,7 +29,7 @@ export function onMessage(params : IMessageEventParams) : void {
     console.log(messageTokens);
     if(commands[messageTokens[0].toLowerCase()]) {
 
-        commands[messageTokens[0].toLowerCase()].process(params);
+        return commands[messageTokens[0].toLowerCase()].process(params);
 
     }
 }
