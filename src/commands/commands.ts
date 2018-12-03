@@ -7,7 +7,6 @@ import { ICommandParams, CALLSIGN } from "../misc/globals";
 
 import { Duplex } from "stream";
 
-
 export interface ICommand {
     name: string;
     description: string;
@@ -54,7 +53,10 @@ export const commands : {[key: string] : ICommand} = {
         usage: "ping",
         admin: false,
         process: async (params: ICommandParams) : Promise<void> => {
-            params.bot.postMessage(params.message.channel, "Pong!");
+            if(!params.message.ts) return;
+
+            let offset : number = (new Date).getTime() - (Number(params.message.ts)*1000);
+            params.bot.postMessage(params.message.channel, `:table_tennis_paddle_and_ball: Pong! _${Math.floor(offset)} ms_`);
         }
     },
     "purpose": {
