@@ -1,22 +1,23 @@
 "use strict";
 
 import SlackBot from "slackbots";
-import Slack from "slack-node";
+import { WebClient } from "@slack/client";
 
 import { IEventParams } from "./misc/globals";
-import { onMessage } from "./handlers/onMessage";
+import { onMessage, IMessageEventParams } from "./handlers/onMessage";
 
 const auth = require("../res/auth/auth.json");
 
 const botToken : string = auth["bot-token"];
-const apiToken : string = auth["api-token"];
+const userToken : string = auth["user-token"];
 
 let bot : any = new SlackBot({
     token: botToken,
     name: 'hack-b0t'
 });
 
-let slack : Slack = new Slack(apiToken);
+let slack : WebClient = new WebClient(botToken);
+let user : WebClient = new WebClient(userToken); 
 
 /**
  * Even though it says message, this handler catches literally everything, 
@@ -25,17 +26,23 @@ let slack : Slack = new Slack(apiToken);
  * 
  * thanks slackbots
  */
-bot.on("message", (data:any) => {
-    console.log(data);
-
-    let params : IEventParams = {
-        data: data, 
-        bot: bot, 
-        slack: slack,
-        apiToken: apiToken
-    };
+bot.on("message", (data : any) => {
+    if(data.type != "error") {
+        console.log(data);
+    }
 
     if(data.type == "message") {
+        let params : IMessageEventParams = {
+            message: data, 
+            bot: bot, 
+            slack: slack,
+            user: user,
+            userToken : userToken
+        }
+
         onMessage(params);
+    }
+    if(data.type == "hello") {
+        console.log("hack-b0t is ready.");
     }
 });

@@ -23,8 +23,10 @@
   "homepage": "https://github.com/Shensd/hack-b0t#readme",
   "dependencies": {
     "@slack/client": "^4.8.0",
+    "@types/jimp": "^0.2.28",
     "@types/slack-node": "^0.1.2",
     "event-stream": "^3.3.4",
+    "jimp": "^0.6.0",
     "nodemon": "^1.18.6",
     "slack-node": "^0.1.8",
     "slackbots": "^1.2.0",
