@@ -1,0 +1,11 @@
+#build
+dist/
+
+#node
+node_modules/
+
+#auth 
+res/auth/auth.json
+
+#vs code
+.vscode

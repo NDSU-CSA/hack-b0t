@@ -55,6 +55,16 @@ export const commands : {[key: string] : ICommand} = {
             params.bot.postMessage(params.data.channel, "Pong!");
         }
     },
+    "pong": {
+        name: "pong",
+        description: "Ping!",
+        category: "fun",
+        usage: "pong",
+        admin: false,
+        process: (params: ICommandParams) : void  => {
+            params.bot.postMessage(params.data.channel, "WRONG WRONG WRONG WRONG");
+        }
+    },
     "purpose": {
         name: "purpose",
         description: "Learn hack-b0t's purpose",
