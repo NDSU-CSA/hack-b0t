@@ -20,7 +20,7 @@ async function execute(params: ICommandParams) : Promise<void> {
     let blurAmt : number = 5;
     if(params.message.text.split(" ").length >= 2) {
         let amt : string = params.message.text.split(" ")[1];
-        if(!parseInt(amt)) {
+        if(!parseInt(amt) || parseInt(amt) < 0) {
             params.bot.postMessage(params.message.channel, "Invalid blur amount");
             return;
         } else {
