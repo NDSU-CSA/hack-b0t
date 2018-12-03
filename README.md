@@ -12,9 +12,13 @@ feel free to ignore him.
 So far it only has basic chat commands, these commands are:
 
 ```
-* help ------ Displays a help page
-* ping ------ Pong!
-* purpose --- Find out Hack-b0t's purpose
+* anime ---- Image testing command
+* ping ----- Pong!
+* purpose -- Learn hack-b0t's purpose
+* help ----- Displays a help page
+* source --- Sends hack-b0t's Github repository
+* blur ----- blur the most recent sent image by a given amount
+* invert --- Inverts the colors of the most recent sent image
 ```
 
 ### How Do I Add it to my Slack Server?

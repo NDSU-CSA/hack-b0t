@@ -1,6 +1,9 @@
 import { Command } from "../command";
 import { ICommandParams } from "../../misc/globals";
 
+import { commands } from "../commands";
+import { CALLSIGN } from "../../misc/globals";
+
 /**
  * Help
  * 
@@ -12,7 +15,6 @@ import { ICommandParams } from "../../misc/globals";
  */
 
 async function execute(params: ICommandParams) : Promise<void> {
-    /*
     let responseText = "```\n";
     // find longest command name
     let longestCmd : number = 0;
@@ -32,9 +34,7 @@ async function execute(params: ICommandParams) : Promise<void> {
 
     responseText += `Usage: ${CALLSIGN}command [params]\n`
     responseText += "```";
-    */
-
-    let responseText = "`Due to a rewrite of hack-b0t's internal command structure, the help command is currently unavailable`";
+    
 
     params.bot.postMessage(params.message.channel, responseText);
 }

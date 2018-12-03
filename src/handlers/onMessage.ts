@@ -29,7 +29,7 @@ export async function onMessage(params : IMessageEventParams) : Promise<void> {
     console.log(messageTokens);
     if(commands[messageTokens[0].toLowerCase()]) {
 
-        return commands[messageTokens[0].toLowerCase()].process(params);
+        return commands[messageTokens[0].toLowerCase()].execute(params);
 
     }
 }
