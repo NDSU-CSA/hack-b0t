@@ -4,6 +4,8 @@ import { ICommandParams } from "../../misc/globals";
 import Jimp from "jimp";
 import { Duplex } from "stream";
 
+import R from "ramda";
+
 /**
  * Blur
  * 
@@ -18,6 +20,8 @@ async function execute(params: ICommandParams) : Promise<void> {
     if(!params.message.text) return;
 
     let blurAmt : number = 5;
+
+    /*
     if(params.message.text.split(" ").length >= 2) {
         let amt : string = params.message.text.split(" ")[1];
         if(!parseInt(amt) || parseInt(amt) < 0) {
@@ -25,6 +29,23 @@ async function execute(params: ICommandParams) : Promise<void> {
             return;
         } else {
             blurAmt = parseInt(amt);
+        }
+    }
+    */
+
+    const splitMessage = R.split(" ");
+    const length = (args : any[]) => R.length(args);
+    const enoughArgs = R.pipe(splitMessage, length, R.gte(R.__, 2));
+    const at = R.curry(( i : number, args : any[]) => args[i]);
+    const getFirstArg = R.pipe(splitMessage, at(1));
+    const toNumber = (str : string) => parseInt(str);
+    const getBlurAmt = R.pipe(getFirstArg, toNumber);
+
+    if(enoughArgs(params.message.text)) {
+        blurAmt = getBlurAmt(params.message.text)
+        if(!blurAmt) {
+            params.bot.postMessage(params.message.channel, "Invalid blur amount");
+            return;
         }
     }
 
