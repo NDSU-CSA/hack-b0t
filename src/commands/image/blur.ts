@@ -19,35 +19,21 @@ import R from "ramda";
 async function execute(params: ICommandParams) : Promise<void> {
     if(!params.message.text) return;
 
-    let blurAmt : number = 5;
+    const send = (params : ICommandParams, message : string) : void => params.bot.sendMessage(params.message.channel, message);
 
-    /*
-    if(params.message.text.split(" ").length >= 2) {
-        let amt : string = params.message.text.split(" ")[1];
-        if(!parseInt(amt) || parseInt(amt) < 0) {
-            params.bot.postMessage(params.message.channel, "Invalid blur amount");
-            return;
-        } else {
-            blurAmt = parseInt(amt);
-        }
+    const isBlurValid = (blur : any) => [
+        (num : any) => !isNaN(num),
+        (num : any) => num > 0
+    ].every(f => f(Number(blur)));
+
+    const words = params.message.text.split(" ");
+    const [, blurInput] = words;
+
+    if(words.length >= 2 && !isBlurValid(blurInput)) {
+        return send(params, "Invalid Blur Amount");
     }
-    */
 
-    const splitMessage = R.split(" ");
-    const length = (args : any[]) => R.length(args);
-    const enoughArgs = R.pipe(splitMessage, length, R.gte(R.__, 2));
-    const at = R.curry(( i : number, args : any[]) => args[i]);
-    const getFirstArg = R.pipe(splitMessage, at(1));
-    const toNumber = (str : string) => parseInt(str);
-    const getBlurAmt = R.pipe(getFirstArg, toNumber);
-
-    if(enoughArgs(params.message.text)) {
-        blurAmt = getBlurAmt(params.message.text)
-        if(!blurAmt) {
-            params.bot.postMessage(params.message.channel, "Invalid blur amount");
-            return;
-        }
-    }
+    const blurAmt = Number(blurInput) || 5;
 
     let start = Date.now();
 
