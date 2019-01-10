@@ -14,10 +14,12 @@ import fs from "fs";
  */
 
 async function execute(params: ICommandParams) : Promise<void> {
+    // ignore messages without a channel
     if(!params.message.channel) return;
 
     const filename : string = "./res/img/test_small.png";
 
+    // upload file to channel of original request
     params.slack.files.upload({
         filename: filename,
         file: fs.createReadStream(filename),
