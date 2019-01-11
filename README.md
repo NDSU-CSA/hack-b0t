@@ -25,7 +25,7 @@ So far it only has basic chat commands, these commands are:
 
 Which can be used by sending a command with a callsign in chat as follows:
 
-![Chat command example (use $help for help)](./res/readme/hack-bot-banner.png)
+![Chat command example (use $help for help)](./res/readme/chat-command-example.png)
 
 ### Future Plans
 
