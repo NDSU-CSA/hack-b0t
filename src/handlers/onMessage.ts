@@ -18,13 +18,17 @@ export interface IMessageEventParams {
  * @param params event params
  */
 export async function onMessage(params : IMessageEventParams) : Promise<void> {
+    // dont respond to bot messages or messages without text
     if(params.message.subtype == "bot_message") return;
     if(!params.message.text) return;
 
     let text : string = params.message.text;
 
+    // if the message does not contain the callsign then ignore the message
     if(text[0] != CALLSIGN) return;
 
+    // grab the command, if it exists in the command map then pass it along with
+    // params to the correct command file
     let messageTokens : string[] = text.slice(1, text.length).split(" ");
     console.log(messageTokens);
     if(commands[messageTokens[0].toLowerCase()]) {
