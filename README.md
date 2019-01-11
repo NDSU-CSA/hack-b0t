@@ -45,4 +45,8 @@ Why would you want that?
 
 But on a more serious note, Hack Bot currently has not been built with multiple servers in mind. This may change in the future though, so stay tuned!
 
+### Contributing
+
+If you would like to contribute to Hack Bot, take a look at `CONTRIBUTING.md`.
+
 ###### This project is licensed under the MIT Open Source License, see LICENSE for more information
